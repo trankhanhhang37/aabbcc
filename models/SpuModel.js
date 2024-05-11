@@ -4,7 +4,6 @@ const DOCUMENT_NAME = 'Spu'
 const COLLECTION_NAME = 'spus'
 
 const spuSchema = new Schema({
-    product_id:{type:String, default:''},
     product_name: { type: String, required: true },
     product_thumb: { type: String, required: true },
     product_description: String,
@@ -37,14 +36,23 @@ const spuSchema = new Schema({
         }
     ]
     */
-    isDraft: { type: Boolean, default: true, index: true, selectL: false },
+    isDraft: { type: Boolean, default: true, index: true, select: false },
     isPublished: { type: Boolean, default: false, index: true, select: false },
-    isDeleted: { type: Boolean, default: false}
+    isDeleted: { type: Boolean, default: false }
 },
+
     {
         collection: COLLECTION_NAME,
         timestamps: true
-    })
+    }
+)
+
+spuSchema.pre('save', function (next) {
+    this.product_slug = slugify(this.product_name, { lower: true })
+    next();
+})
+spuSchema.index({ product_name: 'text' });
+
 module.exports = {
     spu: model(DOCUMENT_NAME, spuSchema)
 }

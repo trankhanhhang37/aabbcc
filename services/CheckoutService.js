@@ -1,7 +1,7 @@
 'use strict'
 const { ForbiddenRequestError, NotFoundRequestError, ConflictRequestError, BadRequestError } = require('../core/error.response')
 const { findCartById } = require("../models/repositories/checkout.repo")
-const { checkProductByServer } = require('../models/repositories/product.repo')
+const { checkProductByServer } = require('../models/repositories/spu.repo')
 const { getDiscountAmount } = require('./DiscountService')
 const { acquireLock, releaseLock } = require('./RedisService')
 const { order } = require('../models/OrderModel')

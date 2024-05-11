@@ -24,7 +24,7 @@ class CartController {
 
         return new SuccessResponse({
             message: "deleted cart success",
-            metaData: await CartService.deleteUserCart(req.body)
+            metaData: await CartService.deleteCartItem(req.body)
         }).send(res)
     }
 

@@ -1,7 +1,7 @@
 'use strict'
 const { ForbiddenRequestError, NotFoundRequestError, ConflictRequestError, BadRequestError } = require('../core/error.response')
 const { discount } = require('../models/DiscountModel')
-const { findAllProducts } = require('../models/repositories/product.repo')
+const { findAllProducts } = require('../models/repositories/spu.repo')
 const { findAllDiscountCodeUnSelect, findAllDiscountCodeSelect, checkDiscountExists } = require('../models/repositories/discount.repo')
 
 class DiscountService {
@@ -78,7 +78,7 @@ class DiscountService {
         if (discount_applies_to === 'all') {
             products = await findAllProducts({
                 filter: {
-                    isPublished: true
+                    isPublished: false
                 },
                 limit: +limit,
                 page: +page,
@@ -92,7 +92,7 @@ class DiscountService {
             products = await findAllProducts({
                 filter: {
                     _id: { $in: discount_product_ids },
-                    isPublished: true
+                    isPublished: false
                 },
                 limit: +limit,
                 page: +page,
@@ -126,22 +126,21 @@ class DiscountService {
      * 
      */
     static async getDiscountAmount({ codeId, userId, products }) {
-
         const foundDiscount = await checkDiscountExists({
             model: discount, filter: {
                 discount_code: codeId
             }
         })
-
         if (!foundDiscount) throw new NotFoundRequestError("discount not found")
-
-        const { discount_is_active, discount_max_uses, discount_min_order_value, discount_users_used, discount_start_date, discount_end_date, discount_max_uses_per_user, discount_type, discount_value , discount_max_value} = foundDiscount
+        const { discount_is_active, discount_max_uses, discount_min_order_value, 
+            discount_users_used, discount_start_date, discount_end_date, 
+            discount_max_uses_per_user, discount_type, discount_value , discount_max_value} = foundDiscount
         if (!discount_is_active) throw new NotFoundRequestError("discount expried")
         if (!discount_max_uses) throw new NotFoundRequestError("discount are out")
-        if (Date.now() < new Date(discount_start_date) || Date.now() > new Date(discount_end_date)) {
-            throw new NotFoundRequestError('discount ecode has expried!')
-        }
 
+        // if (Date.now() < new Date(discount_start_date) || Date.now() > new Date(discount_end_date)) {
+        //     throw new NotFoundRequestError('discount ecode has expried!')
+        // }
         let totalOrder = 0
         if (discount_min_order_value > 0) {
             totalOrder = products.reduce((acc, pro) => {
@@ -151,7 +150,6 @@ class DiscountService {
             if (totalOrder < discount_min_order_value) {
                 throw new NotFoundRequestError(`discount requires a minium order value of ${discount_min_order_value}`)
             }
-
         }
         if (discount_max_uses_per_user > 0) {
             const userDiscount = discount_users_used.find(user => user.userId === userId)
@@ -159,7 +157,6 @@ class DiscountService {
                 //
             }
         }
-
         let amount = discount_type === 'fixed_amount' ? discount_value : totalOrder * (discount_value / 100)
         if( amount > discount_max_value){
           amount = discount_max_value 
@@ -169,9 +166,7 @@ class DiscountService {
             discount: amount,
             totalPrice: totalOrder - amount
         }
-
     }
-
     //xoa discount
     static async deleteDiscountCode({ codeId }) {
         const deleted = await DiscountModel.findOneAndDelete({

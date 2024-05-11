@@ -1,11 +1,11 @@
 'use strict'
 
-const ProductService = require('../services/ProductService')
+const SpuService = require('../services/SpuService')
 const { SuccessResponse } = require('../core/success.response')
 const { newSpu, oneSpu } = require('../services/SpuService')
 const { oneSku } = require('../services/SkuService')
 
-class ProductController {
+class SpuController {
 
     //spu, skuice
     findOneSpu=async(req, res, next)=>{
@@ -19,6 +19,7 @@ class ProductController {
             next(error)
         }
     }
+    
     findOneSku=async(req, res, next)=>{
         try {
             const{ sku_id, product_id}=req.query;
@@ -57,14 +58,14 @@ class ProductController {
     }
 
     //update product
-    updateProduct = async (req, res, next) => {
-        new SuccessResponse({
-            message: 'update product success',
-            metadata: await ProductService.updateProduct(
-                req.body.product_type,  req.params.productId, { ...req.body}
-            )
-        }).send(res)
-    }
+    // updateProduct = async (req, res, next) => {
+    //     new SuccessResponse({
+    //         message: 'update product success',
+    //         metadata: await ProductService.updateProduct(
+    //             req.body.product_type,  req.params.productId, { ...req.body}
+    //         )
+    //     }).send(res)
+    // }
 
     //query
     /**
@@ -76,8 +77,8 @@ class ProductController {
     publishProduct = async (req, res, next) => {
         new SuccessResponse({
             message: 'success',
-            metadata: await ProductService.publishProduct({
-                product_id: req.params.id
+            metadata: await SpuService.isPublishProduct({
+                spu_id: req.params.id
             })
         }).send(res)
     }
@@ -85,49 +86,49 @@ class ProductController {
     unPublishProduct = async (req, res, next) => {
         new SuccessResponse({
             message: 'success',
-            metadata: await ProductService.unPublishProduct({
-                product_id: req.params.id
+            metadata: await SpuService.isUnPublishProduct({
+                spu_id: req.params.id
             })
         }).send(res)
     }
 
-    getAllDrafts = async (req, res, next) => {
-        new SuccessResponse({
-            message: 'get list draft',
-            metadata: await ProductService.findAllDraft()
-        }).send(res)
-    }
+    // getAllDrafts = async (req, res, next) => {
+    //     new SuccessResponse({
+    //         message: 'get list draft',
+    //         metadata: await ProductService.findAllDraft()
+    //     }).send(res)
+    // }
 
-    getAllPublish = async (req, res, next) => {
-        new SuccessResponse({
-            message: 'get list published',
-            metadata: await ProductService.findAllPublish()
-        }).send(res)
-    }
+    // getAllPublish = async (req, res, next) => {
+    //     new SuccessResponse({
+    //         message: 'get list published',
+    //         metadata: await ProductService.findAllPublish()
+    //     }).send(res)
+    // }
 
-    getListSearch = async (req, res, next) => {
-        new SuccessResponse({
-            message: 'get list search product',
-            metadata: await ProductService.searchProduct(req.params)
-        }).send(res)
-    }
+    // getListSearch = async (req, res, next) => {
+    //     new SuccessResponse({
+    //         message: 'get list search product',
+    //         metadata: await ProductService.searchProduct(req.params)
+    //     }).send(res)
+    // }
 
     findAllProducts = async (req, res, next) => {
         new SuccessResponse({
             message: 'get find all products product',
-            metadata: await ProductService.findAllProducts(req.query)
+            metadata: await SpuService.isFindAllProducts(req.body)
         }).send(res)
     }
 
     findProduct = async (req, res, next) => {
         new SuccessResponse({
             message: 'get find  products product',
-            metadata: await ProductService.findProduct({
-                product_id: req.params.product_id
+            metadata: await SpuService.isFindProduct({
+                spu_id: req.params.spu_id
             })
         }).send(res)
     }
 }
 
-module.exports = new ProductController;
+module.exports = new SpuController;
 

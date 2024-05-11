@@ -2,14 +2,13 @@
 const _ = require('lodash')
 
 const SKU_MODEL = require('../models/SkuModel')
-const { randomProductId } = require('../utils')
 const newSku = async ({
     spu_id, sku_list
 }) => {
     try {
         const convert_sku_list = sku_list.map(sku => {
-            console.log(`sku_list`)
-            return { ...sku, product_id: spu_id, sku_id: `${spu_id}.${randomProductId()}` }
+            const { thumb_url, public_id, ...skuNoImage } = sku;
+            return { ...skuNoImage, product_id: spu_id }
 
         })
         console.log(convert_sku_list)

@@ -1,7 +1,7 @@
 'use strict'
 const { cart } = require('../models/CartModel')
 const { ForbiddenRequestError, NotFoundRequestError, ConflictRequestError, BadRequestError } = require('../core/error.response')
-const { getProductById } = require('../models/repositories/product.repo')
+const { getProductById } = require('../models/repositories/spu.repo')
 class CartService {
 
     //start repo cart
@@ -11,6 +11,7 @@ class CartService {
             $addToSet: {
                 cart_products: product
             }
+            
         }, options = {
             upsert: true,
             new: true
@@ -21,7 +22,7 @@ class CartService {
 
     static async updateUserCartQuantity({ userId, product }) {
 
-        const { productId, quantity } = product
+        const { productId, quantity, sku_id } = product
 
         const query = {
             cart_userId: userId,
@@ -30,6 +31,9 @@ class CartService {
         }, updateSet = {
             $inc: {
                 'cart_products.$.quantity': quantity
+            },
+            $set: {
+                'cart_products.$.sku_id': sku_id
             }
         }, options = {
             upsert: true,
@@ -47,9 +51,18 @@ class CartService {
         if (!userCart) {
             return await CartService.createUserCart({ userId, product })
         }
+
         //neu co cart roi nhung chua co sp
         if (!userCart.cart_products.length) {
             userCart.cart_products = [product]
+            return await userCart.save()
+        }
+        //neu gio hang chua co sp khac 
+        let hasProduct = await userCart.cart_products.find((pro) => {
+            return pro.productId === product.productId
+        })
+        if (!hasProduct) {
+            userCart.cart_products = [...userCart.cart_products, product]
             return await userCart.save()
         }
         //gio hang ton tai co sp nay => update quantity
@@ -59,9 +72,11 @@ class CartService {
 
     //update cart trong gio hang
     static async addToCartV2({ userId, shop_order_ids = {} }) {
-        const { productId, quantity, old_quantity } = shop_order_ids?.item_products
-        //check sp co ton tai k
-        const foundProduct = await getProductById( productId)
+        // console.log(userId[1].o1[0]+userId[1].o2[1])
+        const { productId, quantity, old_quantity, sku_id } = shop_order_ids?.item_products
+        console.log(shop_order_ids)
+        // check sp co ton tai k
+        const foundProduct = await getProductById(productId)
         if (!foundProduct) throw new NotFoundRequestError('product do not belong to the shop')
 
         if (quantity === 0) {
@@ -72,14 +87,15 @@ class CartService {
             userId,
             product: {
                 productId,
-                quantity: quantity - old_quantity
+                quantity: quantity - old_quantity,
+                sku_id
             }
         })
     }
 
     //deleted
-    static async deleteUserCart({ userId, productId }) {
-        console.log({userId, productId})
+    static async deleteCartItem({ userId, productId }) {
+        console.log({ userId, productId })
         const query = {
             cart_userId: userId,
             cart_state: 'active'
@@ -92,9 +108,14 @@ class CartService {
         return await cart.updateOne(query, updateSet)
     }
 
+    //
+    async deleteToCartByCartIdAndUserId({ cartId, userId }) {
+        return await cart.deleteOne({ _id: Types.ObjectId(cartId), cart_userId: userId }).lean()
+    }
+
     //get list
-    static  async getListUserCart({ userId }) {
-        console.log({userId})
+    static async getListUserCart({ userId }) {
+        console.log({ userId })
         return await cart.findOne({ cart_userId: userId }).lean()
     }
 }
