@@ -1,5 +1,6 @@
 'use strict'
 const BRAND_MODEL = require('../models/BrandModel')
+const { getSelectData } = require('../utils')
 
 const newBrand = async ({
     brand_name, brand_image, brand_description
@@ -15,4 +16,19 @@ const newBrand = async ({
 
     }
 }
-module.exports = { newBrand }
+
+const getListBrand = async ({ sort, isPublished = true, select }) => {
+    try {
+        const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
+        const listbrand = await BRAND_MODEL.brand.find({
+            isPublished
+        }).sort(sortBy)
+            .select(getSelectData(select))
+            .lean()
+        return listbrand
+
+    } catch (error) {
+
+    }
+}
+module.exports = { newBrand, getListBrand }

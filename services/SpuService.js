@@ -4,12 +4,7 @@ const SPU_MODEL = require('../models/SpuModel')
 const { newSku, allSkuBySpuId } = require('./SkuService')
 const _ = require('lodash')
 const { addImage } = require('./GalleryService')
-const { findAllDraft,
-    publishProduct,
-    unPublishProduct,
-    findAllPublish,
-    searchProduct, findAllProducts, findProduct,
-    updateProductById } = require('../models/repositories/spu.repo')
+const spu_repo = require('../models/repositories/spu.repo')
 
 const newSpu = async ({
     product_name,
@@ -18,9 +13,12 @@ const newSpu = async ({
     product_slug,
     product_price,
     product_category,
+    product_brand,
     product_quantity,
     product_attributes = [],
     product_variations = [],
+    isDraft=true,
+    isPublished=false,
     sku_list = []
 
 }) => {
@@ -33,9 +31,12 @@ const newSpu = async ({
             product_slug,
             product_price,
             product_category,
+            product_brand,
             product_quantity,
             product_attributes,
             product_variations,
+            isDraft,
+            isPublished
         })
         // get spu_id add to sku.service
         if (spu && sku_list.length) {
@@ -73,29 +74,49 @@ const oneSpu = async ({ spu_id }) => {
     }
 }
 
-const isPublishProduct =async({ product_id })=> {
+const isPublishProduct = async ({ product_id }) => {
     console.log(product_id)
-    return await publishProduct({ product_id })
+    return await spu_repo.publishProduct({ product_id })
 }
 
-const isUnPublishProduct=async({ product_id })=> {
+const isUnPublishProduct = async ({ product_id }) => {
     console.log(product_id)
-    return await unPublishProduct({ product_id })
+    return await spu_repo.unPublishProduct({ product_id })
 }
 
-const  isFindAllProducts =async({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } })=> {
-    return await findAllProducts({
+const isFindProductsByAttributes = async ({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } }) => {
+    return await spu_repo.isFindProductsByAttributes({
         limit, sort, page, filter,
-        select: ['product_name', 'product_thumb', 'product_price','product_type']
+        select: ['product_name', 'product_thumb', 'product_price', 'product_type']
     })
 }
 
-const isFindProduct = async({ product_id }) =>{
-    return await findProduct({ product_id, unSelect: ['__v', 'product_thumb', 'product_price'] })
+const isFindProductByFilter = async ({ limit = 50, sort = 'ctime', page = 1,
+    filter = { isPublished: true, product_attributes, product_category: '',
+     product_brand: [], product_price: { min_price: 0, max_price: 99999999 } } }) => {
+
+
+        
+    return await spu_repo.findProductByFilter({
+        limit, sort, page, filter,
+        select: ['product_name', 'product_thumb', 'product_price', 'product_type']
+    })
+}
+
+const isFindProduct = async ({ product_id }) => {
+    return await spu_repo.findProduct({ product_id, unSelect: ['__v', 'product_thumb', 'product_price'] })
+}
+
+const isProductsByCategory = async ({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true, product_category: '' } }) => {
+    return await spu_repo.isProductByCategory({
+        limit, sort, page, filter,
+        select: ['product_name', 'product_category', 'product_thumb', 'product_price', 'product_type']
+    })
 }
 
 
 
 module.exports = {
-    newSpu, oneSpu, isPublishProduct, isUnPublishProduct, isFindAllProducts, isFindProduct
+    newSpu, oneSpu, isPublishProduct, isUnPublishProduct, isFindProductsByAttributes, isFindProduct,
+    isProductsByCategory, isFindProductByFilter
 }

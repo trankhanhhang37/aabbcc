@@ -8,5 +8,11 @@ class BlogController{
             metadata: await BlogService.createBlog({...req.body})
         }).send(res)
     }
+    getListBlogs=async(req,res, next)=>{
+        new SuccessResponse({
+            message:'success',
+            metadata: await BlogService.getListBlogs({...req.query})
+        }).send(res)
+    }
 }
 module.exports = new BlogController;

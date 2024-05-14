@@ -113,10 +113,17 @@ class SpuController {
     //     }).send(res)
     // }
 
-    findAllProducts = async (req, res, next) => {
+    findProductsByAttributes = async (req, res, next) => {
         new SuccessResponse({
             message: 'get find all products product',
-            metadata: await SpuService.isFindAllProducts(req.body)
+            metadata: await SpuService.isFindProductsByAttributes(req.body)
+        }).send(res)
+    }
+
+    findProductsByFilter = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'get find all products product',
+            metadata: await SpuService.isFindProductByFilter(req.body)
         }).send(res)
     }
 
@@ -128,6 +135,14 @@ class SpuController {
             })
         }).send(res)
     }
+
+    getProductsByCategory = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'get find all products product',
+            metadata: await SpuService.isProductsByCategory(req.body)
+        }).send(res)
+    }
+
 }
 
 module.exports = new SpuController;

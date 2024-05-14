@@ -8,7 +8,7 @@ const ReasonStatusCode = {
     CREATED: 'Created'
 }
 class SuccessResponse {
-    constructor(message, statusCode = StatusCode.OK, reasonStatusCode = ReasonStatusCode.ok, metaData = {}) {
+    constructor({message, statusCode = StatusCode.OK, reasonStatusCode = ReasonStatusCode.ok, metaData = {}}) {
 
         this.message = !message ? reasonStatusCode : message
         this.status = statusCode

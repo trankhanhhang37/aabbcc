@@ -1,9 +1,11 @@
 'use strict'
 const _ = require('lodash')
+const jwt = require("jsonwebtoken")
 const { Types } = require('mongoose')
 
-const convertToObjectMongoDb = (id) => { 
-    return new Types.ObjectId(id) }
+const convertToObjectMongoDb = (id) => {
+    return new Types.ObjectId(id)
+}
 
 const getInfoData = ({ filed = [], object = {} }) => {
     return _.pick(object, filed)
@@ -46,9 +48,45 @@ const updateNestedObjectParser = obj => {
     return final
 }
 
-const randomProductId= _ =>{
-    return Math.floor(Math.random()*899999+100000)
+const randomProductId = _ => {
+    return Math.floor(Math.random() * 899999 + 100000)
 }
+
+
+
+const GeneratePassword = async (password, salt) => {
+    return await bcrypt.hash(password, salt);
+}
+const createToken = async (payload, publicKey, privateKey) => {
+    try {
+        const accessToken = await jwt.sign(payload, publicKey, {
+            expiresIn: "2d"
+        })
+        const refreshToken = await jwt.sign(payload, privateKey, {
+            expiresIn: "7d"
+        })
+        jwt.verify(accessToken, publicKey, (err, decode) => {
+            if (err) {
+                console.log("err verify:  ", err)
+            } else {
+                console.log("decode:  ", decode)
+            }
+        })
+
+        return { accessToken, refreshToken }
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+}
+
+const replacePlaceholder = (template, params) => {
+    Object.keys(params).forEach(k => {
+      const placeholder = `{{${k}}}` ///{{verify key}}
+      template = template.replace(new RegExp(placeholder, 'g'), params[k])
+    })
+    return template
+  }
 
 module.exports = {
     getInfoData, getSelectData,
@@ -57,5 +95,7 @@ module.exports = {
     updateNestedObjectParser,
     convertToObjectMongoDb,
     randomProductId,
+    GeneratePassword,
+    createToken, replacePlaceholder
 
 }

@@ -15,35 +15,48 @@ const newSku = async ({
 
         const skus = await SKU_MODEL.sku.create(convert_sku_list)
         return skus
-        
+
     } catch (error) {
         return []
     }
 }
 
-const oneSku = async ({sku_id, product_id})=>{
+const oneSku = async ({ sku_id, product_id }) => {
     try {
         const sku = await SKU_MODEL.sku.findOne({ sku_id, product_id }).lean()
         // if(sku){
 
         // }
         console.log(sku)
-        return _.omit(sku, ['__v','updateAt','createAt','isDeleted'])
-        
+        return _.omit(sku, ['__v', 'updateAt', 'createAt', 'isDeleted'])
+
     } catch (error) {
         return null
     }
 }
 
-const allSkuBySpuId = async({product_id})=>{
+const allSkuBySpuId = async ({ product_id }) => {
     try {
-        const skus = await SKU_MODEL.sku.find({product_id}).lean()
+        const skus = await SKU_MODEL.sku.find({ product_id }).lean()
         return skus
-        
+
+    } catch (error) {
+        return null
+    }
+}
+const getSkuByPrice = async ({ min_price, max_price }) => {
+    try {
+        const skus = await SKU_MODEL.sku.find({
+            sku_price:{
+             "min_price":min_price,
+             "max_price":max_price
+            }
+        }).lean()
+        return skus
     } catch (error) {
         return null
     }
 }
 module.exports = {
-    newSku, oneSku, allSkuBySpuId
+    newSku, oneSku, allSkuBySpuId, getSkuByPrice
 }

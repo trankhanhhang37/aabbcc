@@ -1,5 +1,6 @@
 'use strict'
 const { blog } = require('../models/BlogModel')
+const { getSelectData } = require('../utils')
 
 class BlogService {
     static async createBlog(payload) {
@@ -18,7 +19,16 @@ class BlogService {
 
         })
         return newBlog
+    }
 
+    static async getListBlogs({sort, isPublished = true, select}) {
+        const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
+        const listBlog =await blog.find({
+            isPublished
+        }).sort(sortBy)
+        .select(getSelectData(select))
+        .lean()
+        return listBlog
     }
 
 }

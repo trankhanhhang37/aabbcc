@@ -8,6 +8,7 @@ const categorySchema = new Schema({
     category_description: String,
     category_icon: String,
     category_image:{ type: Array, default:[]}, 
+    isPublished: { type: Boolean, default: true, index: true, select: false },
 },
     {
         collection: COLLECTION_NAME,

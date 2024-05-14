@@ -4,7 +4,7 @@ const spuController = require('../controllers/SpuController');
 const { asyncHandler } = require("../helpers");
 
 // router.get('/search/:keySearch', productController.getListSearch)
-router.post('/allproducts', spuController.findAllProducts)
+router.post('/allproducts', spuController.findProductsByAttributes)
 router.get('/:spu_id', spuController.findProduct)
 
 router.get('/sku/select_variation', spuController.findOneSku)
@@ -19,6 +19,6 @@ router.post('/unpublish/:id', spuController.unPublishProduct)
 //query
 // router.get('/drafts/all', spuController.getAllDrafts)
 // router.get('/published/all', spuController.getAllPublish)
-
-
+router.post('/productbycategory', spuController.getProductsByCategory)
+router.post('/productbyfilter', spuController.findProductsByFilter)
 module.exports = router

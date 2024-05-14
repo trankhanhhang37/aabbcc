@@ -9,5 +9,12 @@ class BrandController{
             metadata: await BrandService.newBrand({...req.body})
         }).send(res)
     }
+
+    getListBrand=async(req,res, next)=>{
+        new SuccessResponse({
+            message:'success',
+            metadata: await BrandService.getListBrand({...req.query})
+        }).send(res)
+    }
 }
 module.exports = new BrandController;
