@@ -7,14 +7,14 @@ class DiscountController{
     createDiscountCode=async(req, res, next)=>{
         new SuccessResponse({
             message: 'success',
-            metadata: await DiscountService.createDiscountCode({...req.body})
+            metaData: await DiscountService.createDiscountCode({...req.body})
         }).send(res)
 
     }
     getAllDiscountCode = async(req, res, next)=>{
         new SuccessResponse({
             message: 'success',
-            metadata: await DiscountService.getAllDiscountCodeByShop({...req.query})
+            metaData: await DiscountService.getAllDiscountCodeByShop({...req.query})
         }).send(res)
 
     }
@@ -22,7 +22,7 @@ class DiscountController{
     getAllDiscountAmount = async(req, res, next)=>{
         new SuccessResponse({
             message: 'success',
-            metadata: await DiscountService.getDiscountAmount({...req.body})
+            metaData: await DiscountService.getDiscountAmount({...req.body})
         }).send(res)
 
     }
@@ -30,7 +30,7 @@ class DiscountController{
     getAllDiscountCodeWithProduct = async(req, res, next)=>{
         new SuccessResponse({
             message: 'success',
-            metadata: await DiscountService.getAllDiscountCodeWithProduct({...req.query})
+            metaData: await DiscountService.getAllDiscountCodeWithProduct({...req.query})
         }).send(res)
 
     }

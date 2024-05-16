@@ -13,6 +13,7 @@ const spuSchema = new Schema({
     product_category: { type: Array, default: [] },//
     product_brand: { type: String, default:'' },//
     product_attributes: { type: Schema.Types.Mixed, required: true },//
+
     /*{
         attribute_id: 12345,
         attribute_value:[

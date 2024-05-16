@@ -1,10 +1,14 @@
 "use strict"
 
+const { convertToObjectMongoDb } = require('../../utils');
 const  UserModel  = require('../UserModel')
 
 //Dealing with data base operations
 class UserRepository {
 
+    async findByUserId (user_id)  {
+        return await UserModel.findOne({ _id: convertToObjectMongoDb(user_id) }).lean();
+    } 
     async findByEmail(user_email) {
         const existinguser = await UserModel.findOne( {user_email} ).lean()
         return existinguser;

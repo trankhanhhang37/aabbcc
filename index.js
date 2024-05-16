@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const mongoose = require("mongoose");
 const routes = require('./routes');
 const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const cors = require('cors')
 // const { initRedis } = require('./config/redis');
 
 const Server = async () => {
@@ -10,8 +12,9 @@ const Server = async () => {
     port = process.env.PORT || 3001;
     // initRedis()
     const app = express();
-
+    app.use(cors())
     app.use(bodyParser.json())
+    app.use(morgan('dev'))
 
     mongoose.connect(`${process.env.MONGO_DB}`)
         .then(() => {

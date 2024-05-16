@@ -6,7 +6,7 @@ class AttributeController{
     createAttribute=async(req,res, next)=>{
         new SuccessResponse({
             message:'success',
-            metadata: await AttributeService.newAttribute({...req.body})
+            metaData: await AttributeService.newAttribute({...req.body})
         }).send(res)
     }
 
@@ -15,7 +15,7 @@ class AttributeController{
 
         new SuccessResponse({
             message:'success',
-            metadata: await AttributeService.findAttribute({ attribute_id})//sai ngoac ha
+            metaData: await AttributeService.findAttribute({ attribute_id})//sai ngoac ha
             
         }).send(res)
     }

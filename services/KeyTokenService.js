@@ -20,10 +20,10 @@ class KeyTokenService {
     }
 
     findByUserId = async (userId) => {
-        return await KeyTokenModel.findOne({ user: Types.ObjectId(userId) }).lean()
+        return await KeyTokenModel.findOne({ user: new Types.ObjectId(userId) }).lean()
     }
     removeKeyById = async (id) => {
-        return await KeyTokenModel.remove({ _id: id }).lean();
+        return await KeyTokenModel.deleteOne({ _id: id }).lean();
     }
 
     findByRefreshTokenUsed = async ( refreshToken ) => {
@@ -34,7 +34,7 @@ class KeyTokenService {
         return await KeyTokenModel.findOne({ refreshToken })
     }
     deleteKeyById = async (userId) => {
-        return await KeyTokenModel.deleteOne({ user: Types.ObjectId(userId) }).lean()
+        return await KeyTokenModel.deleteOne({ user: new Types.ObjectId(userId) }).lean()
     }
 
 }

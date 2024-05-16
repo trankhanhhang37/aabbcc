@@ -1,34 +1,29 @@
-"use strict";
+// "use strict";
 
-const { AddressModel } = require('../AddressModel');
-const UserModel = require('../UserModel');
+// const  AddressModel  = require('../AddressModel');
+// const UserModel = require('../UserModel');
 
-class AddressRepository {
+// class AddressRepository {
 
-    async CreateAddress({ _id, phone_number, street, postalCode, city, country }) {
+//     async createAddress({ user_id, phone_number, street, postalCode, city, country }) {
 
-        const profile = await UserModel.findById(_id);
-
-        if (profile) {
-
-            const newAddress = new AddressModel({
-                _id,
-                phone_number,
-                street,
-                postalCode,
-                city,
-                country
-            })
-
-            await newAddress.save();
-
-            profile.address.push(newAddress);
-        }
-
-        return await profile.save();
-    }
+//         const query = { user_id: user_id }
+//         const updateOrInsert = {
+//             $addToSet: {
+//                 phone_number: phone_number,
+//                 street:street,
+//                 postalCode:postalCode,
+//                 city:city,
+//                 country:country
+//             }
+//         }, options = {
+//             upsert: true,
+//             new: true
+//         }
+//         return await AddressModel.findOneAndUpdate(query, updateOrInsert, options)
+//     }
 
 
-}
+// }
 
-module.exports = AddressRepository;
+// module.exports = AddressRepository;

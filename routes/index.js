@@ -12,6 +12,7 @@ const UploadRouter = require('./UploadRouter')
 const TopicRouter = require('./TopicRouter')
 const BlogRouter = require('./BlogRouter')
 const CommentRouter=require('./CommentRouter')
+const SpecialOfferRouter =require('./SpecialOfferRouter')
 
 const routes = (app) => {
     app.use('/api/spu', SpuRouter)
@@ -29,6 +30,8 @@ const routes = (app) => {
     app.use('/api/topic', TopicRouter)
     app.use('/api/blog', BlogRouter)
     app.use('/api/comment', CommentRouter)
+    app.use('/api/specialOffer', SpecialOfferRouter)
+
 
     
 

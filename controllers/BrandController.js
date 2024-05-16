@@ -6,14 +6,14 @@ class BrandController{
     createBrand=async(req,res, next)=>{
         new SuccessResponse({
             message:'success',
-            metadata: await BrandService.newBrand({...req.body})
+            metaData: await BrandService.newBrand({...req.body})
         }).send(res)
     }
 
     getListBrand=async(req,res, next)=>{
         new SuccessResponse({
             message:'success',
-            metadata: await BrandService.getListBrand({...req.query})
+            metaData: await BrandService.getListBrand({...req.query})
         }).send(res)
     }
 }

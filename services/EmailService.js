@@ -3,7 +3,7 @@
 const transport = require("../config/nodemailer");
 const { replacePlaceholder } = require("../utils");
 const TemplateService = require("./TemplateService");
-
+const tem = require('../utils/tem.html')
 
 const sendEmailLinkVerify = async ({ html, toEmail, subject = "xac nhan", text = "..." }) => {
     try {
@@ -20,8 +20,8 @@ const sendEmailLinkVerify = async ({ html, toEmail, subject = "xac nhan", text =
             }
             console.log("message sent :: ", info.messageId)
         })
-    } catch (error) {
 
+    } catch (error) {
         console.log(error);
         return error
 
@@ -31,14 +31,14 @@ const sendEmailLinkVerify = async ({ html, toEmail, subject = "xac nhan", text =
 
 const sendEmailToken = async ({ user_email, token }) => {
     try {
-        const template = await TemplateService.getTemplate({
-            tem_name: "HTML EMAIL TOKEN"
-        })
-        if (!template) {
-            return console.log("not found tem")
-        }
+        // const template = await TemplateService.getTemplate({
+        //     tem_name: "HTML EMAIL TOKEN"
+        // })
+        // if (!template) {
+        //     return console.log("not found tem")
+        // }   
         console.log("otp_token", token.otp_token)
-        const content = replacePlaceholder(template.tem_html, { link_verify: `http://localhost:5000/user/v1/api/customer/welcome?token=${token.otp_token}` })
+        const content = replacePlaceholder(tem.htmlEmailToken, { link_verify: `http://localhost:3001/api/user/welcome?token=${token.otp_token}` })
 
         sendEmailLinkVerify({
             html: content,

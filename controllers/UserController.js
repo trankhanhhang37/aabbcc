@@ -1,7 +1,7 @@
 
 "use strict";
 const UserService = require('../services/UserService');
-const  successResponse  = require('../core/success.response');
+const successResponse = require('../core/success.response');
 class UserController {
     constructor() {
         this.service = new UserService();
@@ -27,6 +27,14 @@ class UserController {
             metaData: await this.service.logout(req.keyStore)
         }).send(res)
     }
+
+    insertAddress = async (req, res, next) => {
+        return new successResponse.SuccessResponse({
+            message: "insert success",
+            metaData: await this.service.insertAddress(req.body)
+        }).send(res)
+    }
+    
     handlerRefreshToken = async (req, res, next) => {
         console.log("req.body.refreshToken:", req.body.refreshToken)
         return new successResponse.SuccessResponse({

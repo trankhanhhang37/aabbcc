@@ -1,15 +1,16 @@
 "use strict"
 
-const  errorResponse  = require('../core/error.response')
+const errorResponse = require('../core/error.response')
 const bcrypt = require('bcrypt')
-const   userRepository = require('../models/repositories/user.repo')
+const userRepository = require('../models/repositories/user.repo')
 const { GeneratePassword, createToken, getInfoData } = require('../utils');
 const crypto = require('crypto');
 const keyTokenService = require('./KeyTokenService');
 const { sendEmailToken } = require('./EmailService');
-const UserModel  = require('../models/UserModel');
+const UserModel = require('../models/UserModel');
 const { checkEmailToken, newOtp } = require('./OtpService');
 const jwt = require("jsonwebtoken");
+const AddressService = require('./AddressService');
 
 class UserService {
     constructor() {
@@ -62,20 +63,38 @@ class UserService {
         }
     }
 
-  
+    async insertAddress({ user_id, phone_number, street, postal_code, city, country }) {
+        const foundUser = await this.repository.findByUserId(user_id)
+        if (!foundUser) {
+            throw new errorResponse.ForbiddenRequestError("auth err")
+        }
+        const createAddress = await AddressService.createAddress(
+            {   user_id: foundUser._id,  
+                phone_number: phone_number, street: street,
+                postal_code: postal_code, city: city, country: country
+            })
+        return createAddress
+    }
+
+
+
+
+
     async checkLoginEmailTokenService({ token }) {
         try {
+
             const { otp_email: email, otp_token, otp_key } = await checkEmailToken({ token })
             const userInfo = await jwt.verify(otp_token, otp_key)
+            console.log('userInfo', userInfo)
             const { user_email, user_name, user_password } = userInfo
             if (!email || (email !== user_email)) throw new errorResponse.ErrorResponse({ message: "token not found" })
 
             const hasuser = await this.finduserByEmail({ user_email: email })
             if (hasuser) throw new errorResponse.ErrorResponse({ message: "email already exists" })
-
+            console.log('hasuser', hasuser)
 
             const passwordHash = await GeneratePassword(user_password, 10)
-
+            console.log('passwordHash', passwordHash)
             const newuser = await this.repository.createUser({ user_email: email, user_name: user_name, user_password: passwordHash })
 
             if (newuser) {
@@ -88,9 +107,9 @@ class UserService {
                 }
                 //create tokenpair
                 const tokens = await createToken({ userId: newuser._id, user_email: email }, publicKey, privateKey)
-                user = await getInfoData({ fileds: ['_id', 'user_name', 'user_email'], object: newuser }),
+                const user = await getInfoData({ fileds: ['_id', 'user_name', 'user_email'], object: newuser })
 
-                    console.log("tokens:;;", tokens)
+                console.log("tokens:;;", tokens)
                 return {
                     message: "Success created user",
                     user,
@@ -112,7 +131,40 @@ class UserService {
     async finduserByIdAndProvider({ user_account_id, user_provider }) {
         return await this.repository.finduserByIdAndProvider({ user_account_id, user_provider })
     }
-    
+
+    async handlerRefreshToken(refreshToken) {
+        const foundToken = await keyTokenService.findByRefreshTokenUsed(refreshToken)
+        if (foundToken) {
+            console.log({ foundToken })
+            const { userId, user_email } = await verifyJWT(refreshToken, foundToken.privateKey)
+            console.log({ userId, user_email })
+            await keyTokenService.deleteKeyById(userId)
+            throw new errorResponse.ForbiddenRequestError("Something wrong happen")
+        }
+
+        const holderToken = await keyTokenService.findByRefreshToken(refreshToken)
+        if (!holderToken) throw new errorResponse.ForbiddenRequestError("user not registered")
+        const { userId, user_email } = await verifyJWT(refreshToken, holderToken.privateKey)
+
+        const founduser = await this.repository.findByEmail(user_email)
+        if (!founduser) throw new errorResponse.ForbiddenRequestError("user not registered 2")
+        const tokens = await GenerateSignature({ userId, user_email }, holderToken.publicKey, holderToken.privateKey)
+
+
+        await holderToken.update({
+            $set: {
+                refreshToken: tokens.refreshToken
+            },
+            $addToSet: {
+                refreshTokensUsed: refreshToken
+            }
+        })
+        return {
+            user: { userId, user_email },
+            tokens
+        }
+    }
+
 
 }
 

@@ -2,6 +2,7 @@
 const _ = require('lodash')
 
 const SKU_MODEL = require('../models/SkuModel')
+const { Types } = require('mongoose')
 const newSku = async ({
     spu_id, sku_list
 }) => {
@@ -37,7 +38,7 @@ const oneSku = async ({ sku_id, product_id }) => {
 
 const allSkuBySpuId = async ({ product_id }) => {
     try {
-        const skus = await SKU_MODEL.sku.find({ product_id }).lean()
+        const skus = await SKU_MODEL.sku.find({ product_id:new Types.ObjectId(product_id) }).lean()
         return skus
 
     } catch (error) {

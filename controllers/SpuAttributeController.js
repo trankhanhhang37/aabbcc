@@ -6,7 +6,7 @@ class AttributeController{
     createSpuAttribute=async(req,res, next)=>{
         new SuccessResponse({
             message:'success',
-            metadata: await SpuAttribute.newSpuAttribute({...req.body})
+            metaData: await SpuAttribute.newSpuAttribute({...req.body})
         }).send(res)
     }
 }

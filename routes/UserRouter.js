@@ -3,15 +3,18 @@
 const express = require('express')
 const router = express.Router()
 const userController = require('../controllers/UserController');
+const {asyncHandler} = require('../helpers/index');
+const { authentication } = require('../auth/authUtils');
+router.post('/address',asyncHandler(userController.insertAddress))
 
-router.get('/welcome', userController.checkLoginEmailToken)
-router.post('/signup', userController.signUp)
-router.post('/login', userController.login)
+router.get('/welcome', asyncHandler(userController.checkLoginEmailToken))
+router.post('/signup', asyncHandler(userController.signUp))
+router.post('/login', asyncHandler(userController.login))
 
 ///authentication
-// router.use(authentication)
+router.use(authentication)
 
-router.post('/logout', userController.logout)
+router.post('/logout',asyncHandler(userController.logout))
 router.post('/handlerRefreshToken', userController.handlerRefreshToken)
 
 module.exports = router

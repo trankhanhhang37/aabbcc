@@ -7,13 +7,13 @@ class CategoryController{
     createCategory=async(req,res, next)=>{
         new SuccessResponse({
             message:'success',
-            metadata: await CategoryService.createCategory({...req.body})
+            metaData: await CategoryService.createCategory({...req.body})
         }).send(res)
     }
     getListCategoryByParentId=async(req,res, next)=>{
         new SuccessResponse({
             message:'success',
-            metadata: await CategoryService.getListCategoryByParentId(req.body)
+            metaData: await CategoryService.getListCategoryByParentId(req.body)
         }).send(res)
     }
 }

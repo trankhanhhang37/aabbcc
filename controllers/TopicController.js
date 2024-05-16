@@ -5,19 +5,19 @@ class TopicController{
     createTopic=async(req,res, next)=>{
         new SuccessResponse({
             message:'success',
-            metadata: await TopicService.createTopic({...req.body})
+            metaData: await TopicService.createTopic({...req.body})
         }).send(res)
     }
     getListTopic=async(req,res, next)=>{
         new SuccessResponse({
             message:'success',
-            metadata: await TopicService.getListTopic({...req.query})
+            metaData: await TopicService.getListTopic({...req.query})
         }).send(res)
     }
     getListTopicByParentId=async(req,res, next)=>{
         new SuccessResponse({
             message:'success',
-            metadata: await TopicService.getListTopicByParentId({...req.body})
+            metaData: await TopicService.getListTopicByParentId({...req.body})
         }).send(res)
     }
 }

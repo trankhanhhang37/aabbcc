@@ -2,13 +2,13 @@
 const _ = require('lodash')
 const jwt = require("jsonwebtoken")
 const { Types } = require('mongoose')
-
+const bcrypt=require('bcrypt')
 const convertToObjectMongoDb = (id) => {
     return new Types.ObjectId(id)
 }
 
-const getInfoData = ({ filed = [], object = {} }) => {
-    return _.pick(object, filed)
+const getInfoData = ({ fileds = [], object = {} }) => {
+    return _.pick(object, fileds)
 }
 
 //('a','b')=(a:1,b:1)

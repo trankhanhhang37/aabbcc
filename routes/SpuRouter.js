@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const spuController = require('../controllers/SpuController');
-const { asyncHandler } = require("../helpers");
 
 // router.get('/search/:keySearch', productController.getListSearch)
 router.post('/allproducts', spuController.findProductsByAttributes)
-router.get('/:spu_id', spuController.findProduct)
+// router.get('/:spu_id', spuController.findProduct)
 
 router.get('/sku/select_variation', spuController.findOneSku)
-router.get('/spu/get_spu_info', asyncHandler(spuController.findOneSpu))
+router.get('/get_spu_info', spuController.findOneSpu)
 
 // router.post('/newproduct', spuController.createProduct)
 router.post('/new', spuController.createSpu)

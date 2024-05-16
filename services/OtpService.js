@@ -43,6 +43,7 @@ const newOtp = async ({ user_email, user_name, user_password }) => {
 
 const checkEmailToken = async ({ token }) => {
     const foundToken = await OtpModel.findOne({ otp_token: token })
+    console.log("foundToken", foundToken)
 
     if (!foundToken) throw new errorResponse.NotFoundRequestError("token not found")
     const deleteOtp = await OtpModel.deleteOne({ otp_token: token }).lean()

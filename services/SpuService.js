@@ -5,6 +5,7 @@ const { newSku, allSkuBySpuId } = require('./SkuService')
 const _ = require('lodash')
 const { addImage } = require('./GalleryService')
 const spu_repo = require('../models/repositories/spu.repo')
+const { Types } = require('mongoose')
 
 const newSpu = async ({
     product_name,
@@ -57,14 +58,17 @@ const newSpu = async ({
     }
 }
 
-const oneSpu = async ({ spu_id }) => {
+const oneSpu = async ({spu_id}) => {
+ 
     try {
         const spu = await SPU_MODEL.spu.findOne({
-            _id: spu_id,
+            _id:new  Types.ObjectId(spu_id),
             isPublished: false// true
         })
+        console.log(spu)
         if (!spu) throw new NotFoundRequestError('spu not found')
         const skus = await allSkuBySpuId({ product_id: spu._id })
+        console.log(spu)
         return {
             spu_info: _.omit(spu, ['__v', 'updateAt']),
             sku_list: skus.map(sku => _.omit(sku, ['__v', 'updateAt', 'createAt', 'isDeleted']))
